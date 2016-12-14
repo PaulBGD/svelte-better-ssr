@@ -1,0 +1,16 @@
+<ul>
+    {{#each list as element}}
+        <li>{{element}}</li>
+    {{/each}}
+    <li>{{hello}}</li>
+</ul>
+
+<script>
+    export default {
+        data() {
+            return {
+                hello: 'World'
+            }
+        }
+    }
+</script>
