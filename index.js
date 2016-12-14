@@ -24,67 +24,68 @@ const baseElement = {
     }
 };
 
-const mainElement = Object.assign({}, baseElement, {
-    type: 'div',
-    children: [],
-});
-
-const styles = {};
-
-const sandbox = {
-    console: {
-        log: noop
-    },
-    log: console.log.bind(console),
-    exports: {},
-    module: {},
-    document: {
-        head: {
-            appendChild(style) {
-                if (styles[this.module]) {
-                    styles[this.module] += style.textContent;
-                } else {
-                    styles[this.module] = style.textContent;
-                }
-            }
-        },
-        querySelector() {
-            return mainElement;
-        },
-        createElement(type) {
-            return Object.assign({}, baseElement, {
-                type,
-                children: []
-            });
-        },
-        createTextNode(text) {
-            return Object.assign({}, baseElement, {
-                type: 'text',
-                value: text,
-                children: []
-            });
-        },
-        createComment(comment) {
-            return {
-                type: 'comment',
-                comment
-            };
-        },
-        createDocumentFragment() {
-            return Object.assign({}, baseElement, {
-                type: 'fragment',
-                children: []
-            });
-        }
-    }
-};
-sandbox.module.exports = sandbox.exports;
 
 function render(components) {
     let returnSingular = !Array.isArray(components);
     if (returnSingular) {
         components = [components];
     }
+
+    const mainElement = Object.assign({}, baseElement, {
+        type: 'div',
+        children: [],
+    });
+
+    const styles = {};
+
+    const sandbox = {
+        console: {
+            log: noop
+        },
+        log: console.log.bind(console),
+        exports: {},
+        module: {},
+        document: {
+            head: {
+                appendChild(style) {
+                    if (styles[this.module]) {
+                        styles[this.module] += style.textContent;
+                    } else {
+                        styles[this.module] = style.textContent;
+                    }
+                }
+            },
+            querySelector() {
+                return mainElement;
+            },
+            createElement(type) {
+                return Object.assign({}, baseElement, {
+                    type,
+                    children: []
+                });
+            },
+            createTextNode(text) {
+                return Object.assign({}, baseElement, {
+                    type: 'text',
+                    value: text,
+                    children: []
+                });
+            },
+            createComment(comment) {
+                return {
+                    type: 'comment',
+                    comment
+                };
+            },
+            createDocumentFragment() {
+                return Object.assign({}, baseElement, {
+                    type: 'fragment',
+                    children: []
+                });
+            }
+        }
+    };
+    sandbox.module.exports = sandbox.exports;
 
     const call = components.map((component, index) => `
 document.head.module = '${component.name}${index}';
