@@ -86,20 +86,14 @@ function render(components) {
         components = [components];
     }
 
-    const names = components.map(component => component.name);
-    const nameToObject = {};
-    components.forEach(component => {
-        nameToObject[component.name] = component;
-    });
-
-    const call = names.map((name, index) => `
-document.head.module = '${name}${index}';
-new module.exports.${name}({
-    target: Rendered${name}${index},
-    data: ${JSON.stringify(nameToObject[name].data || {})}
+    const call = components.map((component, index) => `
+document.head.module = '${component.name}${index}';
+new module.exports.${component.name}({
+    target: Rendered${component.name}${index},
+    data: ${JSON.stringify(component.data || {})}
 })`).join('\n');
-    names.forEach((name, index) => {
-        sandbox[`Rendered${name}${index}`] = Object.assign({}, baseElement, {
+    components.forEach((component, index) => {
+        sandbox[`Rendered${component.name}${index}`] = Object.assign({}, baseElement, {
             type: 'div',
             children: [],
         });
@@ -110,15 +104,15 @@ new module.exports.${name}({
         filename: file
     });
 
-    const toReturn = {};
-    names.forEach((name, index) => {
-        toReturn[name] = {
-            html: toHTML(sandbox[`Rendered${name}${index}`]),
-            css: styles[`${name}${index}`] || null
+    const toReturn = components.map((component, index) => {
+        return {
+            name: component.name,
+            html: toHTML(sandbox[`Rendered${component.name}${index}`]),
+            css: styles[`${component.name}${index}`] || null
         };
     });
     if (returnSingular) {
-        return toReturn[Object.keys(toReturn)[0]];
+        return toReturn[0];
     }
     return toReturn;
 }
@@ -159,7 +153,7 @@ console.log(render([
             list: [
                 'Franny',
                 'Millie',
-                'Minne'
+                'Minnie'
             ]
         }
     },
